@@ -10,7 +10,7 @@ class AppointmentRequest(BaseModel):
     class Config:
         json_schema_extra = {
             'example': {
-                'date': '23-08-2018',
+                'date': '2018-08-18',
                 'time': '14:30:00',
                 'description': 'Cita 1',
                 'patientId': 1

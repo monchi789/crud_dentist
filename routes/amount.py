@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Path
+# from models.models import Amounts
 from models.amount import Amounts
 from starlette import status
 from starlette.exceptions import HTTPException
@@ -22,7 +23,7 @@ async def get_amount_by_id(db: db_dependency, amount_id: int = Path(gt=0)):
     raise HTTPException(status_code=404, detail='Amount not found')
 
 
-@router.get('/amounts/{treatment_id}', status_code=status.HTTP_200_OK)
+@router.get('/amounts/treatment/{treatment_id}', status_code=status.HTTP_200_OK)
 async def get_amount_by_treatment(db: db_dependency, treatment_id: int = Path(gt=0)):
     amount_model = db.query(Amounts).filter(Amounts.treatmentId == treatment_id)
     if amount_model is not None:
@@ -32,7 +33,10 @@ async def get_amount_by_treatment(db: db_dependency, treatment_id: int = Path(gt
 
 @router.post('/amounts/', status_code=status.HTTP_201_CREATED)
 async def create_amount(db: db_dependency, amount_request: AmountRequest):
-    amount_model = Amounts(**amount_request.model_dump())
+    payment_date = datetime.strptime(amount_request.payment_date, '%Y-%m-%d')
+
+    amount_model = Amounts(payment_date=payment_date, amount_payment=amount_request.amount_payment,
+                           treatmentId=amount_request.treatmentId)
     db.add(amount_model)
     db.commit()
 

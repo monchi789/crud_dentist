@@ -2,6 +2,7 @@ from fastapi import APIRouter, Path
 from starlette import status
 from starlette.exceptions import HTTPException
 from config.database import db_dependency
+# from models.models import Users
 from models.user import Users
 from schemas.user import UserRequest
 

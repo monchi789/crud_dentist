@@ -2,6 +2,9 @@ from fastapi import APIRouter, Path
 from config.database import db_dependency
 from starlette import status
 from starlette.exceptions import HTTPException
+# from models.models import Appointments
+from datetime import datetime
+import time
 from models.appointment import Appointments
 from schemas.appointment import AppointmentRequest
 
@@ -31,7 +34,11 @@ async def get_appointment_by_patient(db: db_dependency, patient_id: int = Path(g
 
 @router.post('/appointments/', status_code=status.HTTP_201_CREATED)
 async def create_appointment(db: db_dependency, appointment_request: AppointmentRequest):
-    appointment_model = Appointments(**appointment_request.model_dump())
+    date = datetime.strptime(appointment_request.date, '%Y-%m-%d')
+    format_time = datetime.strptime(appointment_request.time, '%H:%M:%S').time()
+
+    appointment_model = Appointments(date=date, time=format_time, description=appointment_request.description,
+                                     patientId=appointment_request.patientId)
     db.add(appointment_model)
     db.commit()
 
@@ -43,7 +50,12 @@ async def update_appointment(db: db_dependency, appointment_request: Appointment
     if appointment_model is None:
         raise HTTPException(status_code=404, detail='Appointment not found')
 
-    appointment_model.date = appointment_request.date
+    try:
+        date = datetime.strptime(appointment_request.date, '%Y-%m-%d')
+    except ValueError:
+        raise HTTPException(status_code=404, detail='Invalid date format. Use YYYY-MM-DD.')
+
+    appointment_model.date = date
     appointment_model.time = appointment_request.time
     appointment_model.description = appointment_request.description
     appointment_model.patientId = appointment_request.patientId
