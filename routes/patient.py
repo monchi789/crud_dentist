@@ -6,7 +6,9 @@ from models.patient import Patients
 from starlette import status
 from schemas.patient import PatientRequest
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Patient']
+)
 
 
 @router.get('/patients/', status_code=status.HTTP_200_OK)

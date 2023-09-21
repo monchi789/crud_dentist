@@ -7,7 +7,9 @@ from schemas.amount import AmountRequest
 from config.database import db_dependency
 from datetime import datetime
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Amount']
+)
 
 
 @router.get('/amounts/', status_code=status.HTTP_200_OK)

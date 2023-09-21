@@ -5,7 +5,9 @@ from starlette import status
 from starlette.exceptions import HTTPException
 from config.database import db_dependency
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Treatment']
+)
 
 
 @router.get('/treatments/', status_code=status.HTTP_200_OK)

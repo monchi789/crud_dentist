@@ -7,7 +7,9 @@ from schemas.invoice import InvoiceRequest
 from models.invoice import Invoices
 from datetime import datetime
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Invoice']
+)
 
 
 @router.get('/invoices/', status_code=status.HTTP_200_OK)

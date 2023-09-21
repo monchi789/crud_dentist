@@ -8,7 +8,9 @@ import time
 from models.appointment import Appointments
 from schemas.appointment import AppointmentRequest
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Appointment']
+)
 
 
 @router.get('/appointments/', status_code=status.HTTP_200_OK)

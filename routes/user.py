@@ -2,11 +2,16 @@ from fastapi import APIRouter, Path
 from starlette import status
 from starlette.exceptions import HTTPException
 from config.database import db_dependency
-# from models.models import Users
 from models.user import Users
 from schemas.user import UserRequest
+from passlib.context import CryptContext
 
-router = APIRouter()
+bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+
+router = APIRouter(
+    tags=['User']
+)
 
 
 @router.get('/users/')
@@ -24,7 +29,10 @@ async def get_user_by_id(db: db_dependency, user_id: int = Path(gt=0)):
 
 @router.post('/user', status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, user_request: UserRequest):
-    user_model = Users(**user_request.model_dump())
+    user_model = Users(username=user_request.username, phone_number=user_request.phone_number,
+                       email=user_request.email, first_name=user_request.first_name,
+                       last_name=user_request.last_name,
+                       password=bcrypt_context.hash(user_request.password))
     db.add(user_model)
     db.commit()
 
