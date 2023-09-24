@@ -63,3 +63,6 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     token = create_access_toke(user.username, user.id, timedelta(minutes=20))
 
     return {'access_token': token, 'token_type': 'bearer'}
+
+
+user_dependency = Annotated[dict, Depends(get_current_user)]
