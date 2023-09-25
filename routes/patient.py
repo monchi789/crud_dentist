@@ -26,7 +26,10 @@ async def get_patient_by_id(user: user_dependency, db: db_dependency, patient_id
 
 
 @router.get('/patients/user/{user_id}', status_code=status.HTTP_200_OK)
-async def get_patient_by_user(db: db_dependency, user_id: int = Path(gt=0)):
+async def get_patient_by_user(user: user_dependency, db: db_dependency, user_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     patient_model = db.query(Patients).filter(Patients.userId == user_id).all()
     if patient_model is not None:
         return patient_model
@@ -37,14 +40,20 @@ async def get_patient_by_user(db: db_dependency, user_id: int = Path(gt=0)):
 async def create_patient(user: user_dependency, db: db_dependency, patient_request: PatientRequest):
     if user is None:
         raise HTTPException(status_code=404, detail='Athentication Failed')
-    patient_model = Patients(**patient_request.model_dump(), userId=user.get('id'))
+    patient_model = Patients(
+        first_name=patient_request.first_name, last_name=patient_request.last_name,
+        phone_number=patient_request.phone_number, address=patient_request.address,
+        userId=user.get('id')
+    )
     db.add(patient_model)
     db.commit()
 
 
 @router.put('/patients/{patient_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def update_patient(db: db_dependency, patient_request: PatientRequest, patient_id: int = Path(gt=0)):
-    patient_model = db.query(Patients).filter(Patients.id == patient_id).first()
+async def update_patient(user: user_dependency, db: db_dependency, patient_request: PatientRequest,
+                         patient_id: int = Path(gt=0)):
+    patient_model = (db.query(Patients).filter(Patients.id == patient_id).
+                     filter(Patients.userId == user.get('id')).first())
 
     if patient_model is None:
         raise HTTPException(status_code=404, detail='Patient not found')
@@ -60,9 +69,9 @@ async def update_patient(db: db_dependency, patient_request: PatientRequest, pat
 
 
 @router.delete('/patients/{patient_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_patient(db: db_dependency, patient_id: int = Path(gt=0)):
-    patient_model = db.query(Patients).filter(Patients.id == patient_id).first()
-    print(patient_model)
+async def delete_patient(user: user_dependency, db: db_dependency, patient_id: int = Path(gt=0)):
+    patient_model = (db.query(Patients).filter(Patients.id == patient_id).
+                     filter(Patients.userId == user.get('id')).first())
     if patient_model is None:
         raise HTTPException(status_code=404, detail='Patient not found')
     db.query(Patients).filter(Patients.id == patient_id).delete()

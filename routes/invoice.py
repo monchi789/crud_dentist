@@ -3,9 +3,9 @@ from config.database import db_dependency
 from starlette.exceptions import HTTPException
 from starlette import status
 from schemas.invoice import InvoiceRequest
-# from models.models import Invoices
 from models.invoice import Invoices
 from datetime import datetime
+from routes.token import user_dependency
 
 router = APIRouter(
     tags=['Invoice']
@@ -13,12 +13,18 @@ router = APIRouter(
 
 
 @router.get('/invoices/', status_code=status.HTTP_200_OK)
-async def get_all_invoices(db: db_dependency):
+async def get_all_invoices(user: user_dependency, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     return db.query(Invoices).all()
 
 
 @router.get('/invoices/{invoice_id}', status_code=status.HTTP_200_OK)
-async def get_invoice_by_id(db: db_dependency, invoice_id: int = Path(gt=0)):
+async def get_invoice_by_id(user: user_dependency, db: db_dependency, invoice_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     invoice_model = db.query(Invoices).filter(Invoices.id == invoice_id).first()
 
     if invoice_model is not None:
@@ -27,7 +33,10 @@ async def get_invoice_by_id(db: db_dependency, invoice_id: int = Path(gt=0)):
 
 
 @router.get('/invoices/treatment/{treatment_id}', status_code=status.HTTP_200_OK)
-async def get_invoice_by_treatment(db: db_dependency, treatment_id: int = Path(gt=0)):
+async def get_invoice_by_treatment(user: user_dependency, db: db_dependency, treatment_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     invoice_model = db.query(Invoices).filter(Invoices.treatmentId == treatment_id).all()
     if invoice_model is not None:
         return invoice_model
@@ -35,7 +44,10 @@ async def get_invoice_by_treatment(db: db_dependency, treatment_id: int = Path(g
 
 
 @router.post('/invoices/', status_code=status.HTTP_201_CREATED)
-async def create_invoice(db: db_dependency, invoice_request: InvoiceRequest):
+async def create_invoice(user: user_dependency, db: db_dependency, invoice_request: InvoiceRequest):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed')
+
     date_offisue = datetime.strptime(invoice_request.date_offisue, '%Y-%m-%d')
     invoice_model = Invoices(date_offisue=date_offisue, invoice_amount=invoice_request.invoice_amount,
                              treatmentId=invoice_request.treatmentId)
@@ -44,7 +56,10 @@ async def create_invoice(db: db_dependency, invoice_request: InvoiceRequest):
 
 
 @router.put('/invoices/{invoice_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def update_invoice(db: db_dependency, invoice_request: InvoiceRequest, invoice_id: int = Path(gt=0)):
+async def update_invoice(user: user_dependency, db: db_dependency, invoice_request: InvoiceRequest,
+                         invoice_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
 
     invoice_model = db.query(Invoices).filter(Invoices.id == invoice_id).first()
 
@@ -65,7 +80,10 @@ async def update_invoice(db: db_dependency, invoice_request: InvoiceRequest, inv
 
 
 @router.delete('/invoices/{invoice_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_invoice(db: db_dependency, invoice_id: int = Path(gt=0)):
+async def delete_invoice(user: user_dependency, db: db_dependency, invoice_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed')
+
     invoice_model = db.query(Invoices).filter(Invoices.id == invoice_id)
 
     if invoice_model is None:

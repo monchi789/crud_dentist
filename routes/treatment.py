@@ -4,6 +4,7 @@ from schemas.treatment import TreatmentRequest
 from starlette import status
 from starlette.exceptions import HTTPException
 from config.database import db_dependency
+from routes.token import user_dependency
 
 router = APIRouter(
     tags=['Treatment']
@@ -11,12 +12,18 @@ router = APIRouter(
 
 
 @router.get('/treatments/', status_code=status.HTTP_200_OK)
-async def get_all_treatments(db: db_dependency):
+async def get_all_treatments(user: user_dependency, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     return db.query(Treatments).all()
 
 
 @router.get('/treatments/{id_treatment}')
-async def get_treatment_by_id(db: db_dependency, treatment_id: int = Path(gt=0)):
+async def get_treatment_by_id(user: user_dependency, db: db_dependency, treatment_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     treatment_model = db.query(Treatments).filter(Treatments.id == treatment_id).first()
     if treatment_model is not None:
         return treatment_model
@@ -24,7 +31,10 @@ async def get_treatment_by_id(db: db_dependency, treatment_id: int = Path(gt=0))
 
 
 @router.get('/treatments/patient/{patient_id}')
-async def get_treatment_by_patient(db: db_dependency, patient_id: int = Path(gt=0)):
+async def get_treatment_by_patient(user: user_dependency, db: db_dependency, patient_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed')
+
     treatment_model = db.query(Treatments).filter(Treatments.patientId == patient_id).first()
     if treatment_model is not None:
         return treatment_model
@@ -32,14 +42,20 @@ async def get_treatment_by_patient(db: db_dependency, patient_id: int = Path(gt=
 
 
 @router.post('/treatments/', status_code=status.HTTP_201_CREATED)
-async def create_treatment(db: db_dependency, treatment_request: TreatmentRequest):
+async def create_treatment(user: user_dependency, db: db_dependency, treatment_request: TreatmentRequest):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed')
+
     treatment_model = Treatments(**treatment_request.model_dump())
     db.add(treatment_model)
     db.commit()
 
 
 @router.put('/treatments/', status_code=status.HTTP_204_NO_CONTENT)
-async def update_treatment(db: db_dependency, treatment_request: TreatmentRequest):
+async def update_treatment(user: user_dependency, db: db_dependency, treatment_request: TreatmentRequest):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Authentication Failed.')
+
     treatment_model = db.query(Treatments).filter(Treatments.id == treatment_request).first()
 
     if treatment_model is None:
