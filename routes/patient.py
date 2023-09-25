@@ -4,7 +4,7 @@ from starlette.exceptions import HTTPException
 from models.patient import Patients
 from starlette import status
 from schemas.patient import PatientRequest
-
+from routes.token import user_dependency
 
 router = APIRouter(
     tags=['Patient']
@@ -12,13 +12,14 @@ router = APIRouter(
 
 
 @router.get('/patients/', status_code=status.HTTP_200_OK)
-async def get_all_patients(db: db_dependency):
-    return db.query(Patients).all()
+async def get_all_patients(user: user_dependency, db: db_dependency):
+    return db.query(Patients).filter(Patients.userId == user.get('id')).all()
 
 
 @router.get('/patients/{patient_id}', status_code=status.HTTP_200_OK)
-async def get_patient_by_id(db: db_dependency, patient_id: int = Path(gt=0)):
-    patient_model = db.query(Patients).filter(Patients.id == patient_id).first()
+async def get_patient_by_id(user: user_dependency, db: db_dependency, patient_id: int = Path(gt=0)):
+    patient_model = (db.query(Patients).filter(Patients.id == patient_id).filter(Patients.userId == user.get('id'))
+                     .first())
     if patient_model is not None:
         return patient_model
     raise HTTPException(status_code=404, detail='Patient not found.')
@@ -33,8 +34,10 @@ async def get_patient_by_user(db: db_dependency, user_id: int = Path(gt=0)):
 
 
 @router.post('/patients/', status_code=status.HTTP_201_CREATED)
-async def create_patient(db: db_dependency, patient_request: PatientRequest):
-    patient_model = Patients(**patient_request.model_dump())
+async def create_patient(user: user_dependency, db: db_dependency, patient_request: PatientRequest):
+    if user is None:
+        raise HTTPException(status_code=404, detail='Athentication Failed')
+    patient_model = Patients(**patient_request.model_dump(), userId=user.get('id'))
     db.add(patient_model)
     db.commit()
 
@@ -59,7 +62,7 @@ async def update_patient(db: db_dependency, patient_request: PatientRequest, pat
 @router.delete('/patients/{patient_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_patient(db: db_dependency, patient_id: int = Path(gt=0)):
     patient_model = db.query(Patients).filter(Patients.id == patient_id).first()
-
+    print(patient_model)
     if patient_model is None:
         raise HTTPException(status_code=404, detail='Patient not found')
     db.query(Patients).filter(Patients.id == patient_id).delete()
