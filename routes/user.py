@@ -4,6 +4,7 @@ from starlette.exceptions import HTTPException
 from config.database import db_dependency
 from models.user import Users
 from schemas.user import UserRequest
+from jose import jwt
 from passlib.context import CryptContext
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
@@ -49,7 +50,7 @@ async def update_user(db: db_dependency, user_request: UserRequest, user_id: int
     user_model.phone_number = user_request.phone_number
     user_model.first_name = user_request.first_name
     user_model.last_name = user_request.last_name
-    user_model.password = user_request.password
+    user_model.password = bcrypt_context.hash(user_request.password)
 
     db.add(user_model)
     db.commit()
