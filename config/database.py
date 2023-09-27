@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 from typing import Annotated
 
-SQL_ALCHEMY_DATABSE_URL = 'sqlite:///./dentist.db'
+SQL_ALCHEMY_DATABSE_URL = 'postgresql+psycopg2://monchi789:1234@127.0.0.1:5432/crud_dentist'
 
-engine = create_engine(SQL_ALCHEMY_DATABSE_URL, connect_args={'check_same_thread': False})
+engine = create_engine(SQL_ALCHEMY_DATABSE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
