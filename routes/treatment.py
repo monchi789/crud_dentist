@@ -13,6 +13,17 @@ router = APIRouter(
 
 @router.get('/treatments/', status_code=status.HTTP_200_OK)
 async def get_all_treatments(user: user_dependency, db: db_dependency):
+    """
+        Obtiene todos los tratamientos médicos.
+
+        Args:
+            user (dict): Usuario autenticado.
+            db: Dependencia de la base de datos.
+
+        Returns:
+            list[Treatments]: Lista de objetos de tratamiento médico.
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed.')
 
@@ -21,6 +32,18 @@ async def get_all_treatments(user: user_dependency, db: db_dependency):
 
 @router.get('/treatments/{id_treatment}')
 async def get_treatment_by_id(user: user_dependency, db: db_dependency, treatment_id: int = Path(gt=0)):
+    """
+        Obtiene un tratamiento médico por ID.
+
+        Args:
+            user (dict): Usuario autenticado.
+            db: Dependencia de la base de datos.
+            treatment_id (int): ID del tratamiento médico.
+
+        Returns:
+            Treatments: Objeto de tratamiento médico.
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed.')
 
@@ -32,6 +55,18 @@ async def get_treatment_by_id(user: user_dependency, db: db_dependency, treatmen
 
 @router.get('/treatments/patient/{patient_id}')
 async def get_treatment_by_patient(user: user_dependency, db: db_dependency, patient_id: int = Path(gt=0)):
+    """
+        Obtiene un tratamiento médico por ID de paciente.
+
+        Args:
+            user (dict): Usuario autenticado.
+            db: Dependencia de la base de datos.
+            patient_id (int): ID del paciente.
+
+        Returns:
+            Treatments: Objeto de tratamiento médico asociado al paciente.
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed')
 
@@ -43,6 +78,18 @@ async def get_treatment_by_patient(user: user_dependency, db: db_dependency, pat
 
 @router.post('/treatments/', status_code=status.HTTP_201_CREATED)
 async def create_treatment(user: user_dependency, db: db_dependency, treatment_request: TreatmentRequest):
+    """
+        Crea un nuevo tratamiento médico.
+
+        Args:
+            user (dict): Usuario autenticado.
+            db: Dependencia de la base de datos.
+            treatment_request (TreatmentRequest): Datos del tratamiento médico a crear.
+
+        Returns:
+            None
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed')
 
@@ -53,6 +100,18 @@ async def create_treatment(user: user_dependency, db: db_dependency, treatment_r
 
 @router.put('/treatments/', status_code=status.HTTP_204_NO_CONTENT)
 async def update_treatment(user: user_dependency, db: db_dependency, treatment_request: TreatmentRequest):
+    """
+        Actualiza un tratamiento médico existente.
+
+        Args:
+            user (dict): Usuario autenticado.
+            db: Dependencia de la base de datos.
+            treatment_request (TreatmentRequest): Datos del tratamiento médico a actualizar.
+
+        Returns:
+            None
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed.')
 

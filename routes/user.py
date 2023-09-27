@@ -17,11 +17,32 @@ router = APIRouter(
 
 @router.get('/users/')
 async def get_all_users(db: db_dependency):
+    """
+        Obtiene todos los usuarios.
+
+        Args:
+            db: Dependencia de la base de datos.
+
+        Returns:
+            list[Users]: Lista de objetos de usuario.
+    """
+
     return db.query(Users).all()
 
 
 @router.get('/users/{user_id}', status_code=status.HTTP_200_OK)
 async def get_user_by_id(db: db_dependency, user_id: int = Path(gt=0)):
+    """
+        Obtiene un usuario por ID.
+
+        Args:
+            db: Dependencia de la base de datos.
+            user_id (int): ID del usuario.
+
+        Returns:
+            Users: Objeto de usuario.
+    """
+
     user_model = db.query(Users).filter(Users.id == user_id).first()
     if user_model is not None:
         return user_model
@@ -30,6 +51,17 @@ async def get_user_by_id(db: db_dependency, user_id: int = Path(gt=0)):
 
 @router.post('/user', status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, user_request: UserRequest):
+    """
+        Crea un nuevo usuario.
+
+        Args:
+            db: Dependencia de la base de datos.
+            user_request (UserRequest): Datos del usuario a crear.
+
+        Returns:
+            None
+    """
+
     user_model = Users(username=user_request.username, phone_number=user_request.phone_number,
                        email=user_request.email, first_name=user_request.first_name,
                        last_name=user_request.last_name,
@@ -40,6 +72,18 @@ async def create_user(db: db_dependency, user_request: UserRequest):
 
 @router.put('/user/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def update_user(db: db_dependency, user_request: UserRequest, user_id: int = Path(gt=0)):
+    """
+        Actualiza un usuario existente.
+
+        Args:
+            db: Dependencia de la base de datos.
+            user_request (UserRequest): Datos del usuario a actualizar.
+            user_id (int): ID del usuario.
+
+        Returns:
+            None
+    """
+
     user_model = db.query(Users).filter(Users.id == user_id).first()
 
     if user_model is None:
@@ -58,6 +102,17 @@ async def update_user(db: db_dependency, user_request: UserRequest, user_id: int
 
 @router.delete('/user/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(db: db_dependency, user_id: int = Path(gt=0)):
+    """
+        Elimina un usuario por ID.
+
+        Args:
+            db: Dependencia de la base de datos.
+            user_id (int): ID del usuario.
+
+        Returns:
+            None
+    """
+
     user_model = db.query(Users).filter(Users.id == user_id).first()
 
     if user_model is None:

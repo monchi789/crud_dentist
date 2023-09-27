@@ -14,6 +14,17 @@ router = APIRouter(
 
 @router.get('/appointments/', status_code=status.HTTP_200_OK)
 async def get_all_appointments(user: user_dependency, db: db_dependency):
+    """
+       Obtiene todas las citas médicas.
+
+       Args:
+           user: Dependencia de usuario autenticado.
+           db: Dependencia de la base de datos.
+
+       Returns:
+           list[Appointments]: Lista de todas las citas médicas registradas.
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed.')
     return db.query(Appointments).all()
@@ -21,6 +32,18 @@ async def get_all_appointments(user: user_dependency, db: db_dependency):
 
 @router.get('/appointments/{appointment_id}', status_code=status.HTTP_200_OK)
 async def get_appointment_by_id(user: user_dependency, db: db_dependency, appointment_id: int = Path(gt=0)):
+    """
+        Obtiene una cita médica por su identificador.
+
+        Args:
+            user: Dependencia de usuario autenticado.
+            db: Dependencia de la base de datos.
+            appointment_id (int): Identificador de la cita médica a recuperar.
+
+        Returns:
+            Appointments: La cita médica correspondiente al ID proporcionado.
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed')
 
@@ -32,6 +55,18 @@ async def get_appointment_by_id(user: user_dependency, db: db_dependency, appoin
 
 @router.get('/appointments/patient/{patient_id}', status_code=status.HTTP_200_OK)
 async def get_appointment_by_patient(user: user_dependency, db: db_dependency, patient_id: int = Path(gt=0)):
+    """
+        Obtiene las citas médicas asociadas a un paciente específico.
+
+        Args:
+            user: Dependencia de usuario autenticado.
+            db: Dependencia de la base de datos.
+            patient_id (int): Identificador del paciente.
+
+        Returns:
+            list[Appointments]: Lista de citas médicas asociadas al paciente.
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed.')
 
@@ -43,6 +78,18 @@ async def get_appointment_by_patient(user: user_dependency, db: db_dependency, p
 
 @router.post('/appointments/', status_code=status.HTTP_201_CREATED)
 async def create_appointment(user: user_dependency, db: db_dependency, appointment_request: AppointmentRequest):
+    """
+        Crea una nueva cita médica.
+
+        Args:
+            user: Dependencia de usuario autenticado.
+            db: Dependencia de la base de datos.
+            appointment_request (AppointmentRequest): Datos de la cita médica a crear en formato JSON.
+
+        Returns:
+            None
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed')
 
@@ -58,6 +105,19 @@ async def create_appointment(user: user_dependency, db: db_dependency, appointme
 
 @router.put('/appointments/{appointment_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def update_appointment(user: user_dependency, db: db_dependency, appointment_request: AppointmentRequest, appointment_id: int = Path(gt=0)):
+    """
+        Actualiza una cita médica existente.
+
+        Args:
+            user: Dependencia de usuario autenticado.
+            db: Dependencia de la base de datos.
+            appointment_request (AppointmentRequest): Datos de la cita médica a actualizar en formato JSON.
+            appointment_id (int): Identificador de la cita médica a actualizar.
+
+        Returns:
+            None
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authentication Failed.')
 
@@ -82,6 +142,18 @@ async def update_appointment(user: user_dependency, db: db_dependency, appointme
 
 @router.delete('/appointments/{appointment_id}')
 async def delete_appointment(user: user_dependency, db: db_dependency, appointment_id: int = Path(gt=0)):
+    """
+        Elimina una cita médica existente.
+
+        Args:
+            user: Dependencia de usuario autenticado.
+            db: Dependencia de la base de datos.
+            appointment_id (int): Identificador de la cita médica a eliminar.
+
+        Returns:
+            None
+    """
+
     if user is None:
         raise HTTPException(status_code=404, detail='Authetication Failed.')
 

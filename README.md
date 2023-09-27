@@ -27,7 +27,7 @@ A continuación, se presenta algunas capturas de pantalla que muestra cómo func
 ## Instalación  
 A continuación, se detallan los pasos para configurar y ejecutar el proyecto en tu entorno local.  
   
-1. Clona este repositorio en tu maquina local: <br> ````
+1. Clona este repositorio en tu maquina local: <br>
 ```bash
 git clone https://github.com/monchi789/crud_dentist.git
 ```
