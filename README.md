@@ -19,10 +19,11 @@ en clínicas médicas u otros entornos similares.
 ## **Capturas de Pantalla**  
 A continuación, se presenta algunas capturas de pantalla que muestra cómo funciona la API en acción:  
   
-![img.png](images/json.png)  
+![[img.png]]
+
   
 ## **Diagrama de la Base de Datos**  
-![crud_dentist.jpg](images%2Fcrud_dentist.jpg)
+![[crud_dentist.jpg]]
   
 ## Instalación  
 A continuación, se detallan los pasos para configurar y ejecutar el proyecto en tu entorno local.  
@@ -66,7 +67,6 @@ A continuación, se detallan algunos ejemplos de cómo utilizar la API:
 ```
 - **Endpoint de Consulta de Pacientes**: Para obtener información de un usuario, realiza una solicitud GET a `/users/{id}` donde `{id}` es el ID del usuario.
 
-## Licencia
 ## Licencia
 
 Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para obtener más detalles.
