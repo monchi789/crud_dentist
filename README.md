@@ -19,11 +19,11 @@ en clínicas médicas u otros entornos similares.
 ## **Capturas de Pantalla**  
 A continuación, se presenta algunas capturas de pantalla que muestra cómo funciona la API en acción:  
   
-![[img.png]]
+![img.png](images/json.png)
 
   
 ## **Diagrama de la Base de Datos**  
-![[crud_dentist.jpg]]
+![crud_dentist.jpg](images%2Fcrud_dentist.jpg)
   
 ## Instalación  
 A continuación, se detallan los pasos para configurar y ejecutar el proyecto en tu entorno local.  
