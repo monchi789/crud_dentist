@@ -4,7 +4,6 @@ from starlette.exceptions import HTTPException
 from config.database import db_dependency
 from models.user import Users
 from schemas.user import UserRequest
-from jose import jwt
 from passlib.context import CryptContext
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
@@ -15,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get('/users/')
+@router.get('/users/', status_code=status.HTTP_200_OK)
 async def get_all_users(db: db_dependency):
     """
         Obtiene todos los usuarios.
